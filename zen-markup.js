@@ -46,9 +46,7 @@ var ZenMarkup = function(input) {
                 } else if (c == '.') {
                     elem.classes.push(this.readModifier());
                 /*} else if (c == '[') {
-                    log(this.readAttributes());
-                    elem.attributes = $.extend({}, elem.attributes,
-                                               this.readAttributes());*/
+                    log(this.readAttributes());*/
                 } else {
                     break;
                 }
@@ -167,5 +165,5 @@ var ZenMarkup = function(input) {
     };
 }
 
-$.zm = function(input) { return new ZenMarkup(input).toDOM(); };
-$.zm.html = function(input) { return new ZenMarkup(input).toHTML(); };
+ZenDOM = function(input) { return new ZenMarkup(input).toDOM(); };
+ZenHTML = function(input) { return new ZenMarkup(input).toHTML(); };
