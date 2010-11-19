@@ -6,7 +6,7 @@ var ZenMarkup = function(input) {
         curr_index: 0,
 
         peekChar: function() { return this.data[this.curr_index]; },
-        getChar: function() { return ++this.curr_index; },
+        getChar: function() { return this.data[++this.curr_index]; },
 
         readWord: function() {
             var word = '';
