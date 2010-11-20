@@ -20,8 +20,8 @@ Silly usage examples
     > ZenRenderer('div#wrapper > p.class1 + p.class2 + p.class3 > p[title="hello zen-markup!"]');
     < "<div id="wrapper"><p class="class1"><p title="hello zen-markup!"></p></p><p class="class2"><p title="hello zen-markup!"></p></p><p class="class3"><p title="hello zen-markup!"></p></p></div>"
     
-    > ZenDOM('ul.my-list > li.elem + li.elem')
-    < [<ul id=​"my-list">       ]
-         <li class=​"elem"></li>
-         <li class=​"elem"></li>
+    > ZenDOM('ul#my-list > li.elem + li.elem')
+    < [<ul id="my-list">        ]
+         <li class="elem"></li>
+         <li class="elem"></li>
        </ul>
