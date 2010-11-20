@@ -6,12 +6,13 @@ var ZenMarkup = function(input) {
         peekChar: function() { return this.data[this.curr_index]; },
         getChar: function() { return this.data[++this.curr_index]; },
 
-        readWord: function() {
-            var word = '';
+        readWord: function(word_ptn) {
             var c = null;
+            var word = '';
+            word_ptn = word_ptn || /\w/;
 
             while (c = this.peekChar()) {
-                if (/\w/.test(c)) {
+                if (word_ptn.test(c)) {
                     word += c;
                     this.getChar();
                 } else {
@@ -27,8 +28,50 @@ var ZenMarkup = function(input) {
             return this.readWord();
         },
 
+        readAttributeValue: function() {
+            var first = this.getChar();
+
+            if (first == '"' || first == "'") {
+                var value = first;
+
+                while (true) {
+                    var c = this.getChar();
+
+                    if (c == first) {
+                        this.getChar();
+                        break;
+                    } else {
+                        value += c;
+                    }
+                }
+
+                return value.substr(1, value.length - 1);
+
+            } else {
+                return this.readWord();
+            }
+        },
+
         readAttributes: function() {
-            // TODO: Complete
+            var attribs = {};
+
+            while (true) {
+                var attrname = this.readWord();
+                var c = this.peekChar();
+
+                if (c == '=') {
+                    var value = this.readAttributeValue();
+                    attribs[attrname] = value;
+                } else {
+                    this.getChar();
+
+                    if (attrname) attribs[attrname] = false;
+
+                    if (c == ']') break;
+                }
+            }
+
+            return attribs;
         },
 
         readElement: function() {
@@ -43,8 +86,12 @@ var ZenMarkup = function(input) {
                     elem.attributes.id = this.readModifier();
                 } else if (c == '.') {
                     elem.classes.push(this.readModifier());
-                /*} else if (c == '[') {
-                    log(this.readAttributes());*/
+                } else if (c == '[') {
+                    this.getChar();
+                    var attribs = this.readAttributes();
+                    for (attrname in attribs) {
+                        elem.attributes[attrname] = attribs[attrname];
+                    }
                 } else {
                     break;
                 }
@@ -99,7 +146,9 @@ var ZenRenderer = function(input) {
             ret = [];
 
             for (attrname in attribs) {
-                ret.push(attrname+'="'+attribs[attrname]+'"');
+                var value = attribs[attrname] ?
+                    '="'+attribs[attrname]+'"' : '';
+                ret.push(attrname+value);
             }
 
             return ret.join(' ');
