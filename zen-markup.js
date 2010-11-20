@@ -91,8 +91,12 @@ var ZenMarkup = function(input) {
             }
 
             return first;
-        },
+        }
+    };
+};
 
+var ZenRenderer = function(input) {
+    var renderer = {
         renderAttributes: function(attribs) {
             ret = [];
 
@@ -125,45 +129,44 @@ var ZenMarkup = function(input) {
             }
 
             return ret;
-        },
+        }
 
-        elemsToDOM: function(elems) {
-            var ret = [];
+    };
 
-            for (var i=0; i<elems.length; i++) {
-                var elem = elems[i];
-                var dom_elem = document.createElement(elem.name);
+    var elems = new ZenMarkup(input).parse();
 
-                for (attrname in elem.attributes) {
-                    dom_elem.setAttribute(attrname, elem.attributes[attrname]);
-                }
+    return renderer.render(elems);
+};
 
-                if (elem.classes.length > 0) {
-                    dom_elem.setAttribute('class', elem.classes.join(' '));
-                }
+var ZenDOM = function(input) {
+    var elemsToDOM = function(elems) {
+        var ret = [];
 
-                var children = this.elemsToDOM(elem.children);
-                for (var ci=0; ci<children.length; ci++) {
-                    dom_elem.appendChild(children[ci]);
-                }
-                
-                ret.push(dom_elem);
+        for (var i=0; i<elems.length; i++) {
+            var elem = elems[i];
+            var dom_elem = document.createElement(elem.name);
+
+            for (attrname in elem.attributes) {
+                dom_elem.setAttribute(attrname, elem.attributes[attrname]);
             }
 
-            return ret;
-        },
+            if (elem.classes.length > 0) {
+                dom_elem.setAttribute('class', elem.classes.join(' '));
+            }
 
-        toDOM: function() {
-            var elems = this.parse();
-            return this.elemsToDOM(elems);
-        },
-
-        toHTML: function() {
-            var elems = this.parse();
-            return this.render(elems);
+            var children = elemsToDOM(elem.children);
+            for (var ci=0; ci<children.length; ci++) {
+                dom_elem.appendChild(children[ci]);
+            }
+                
+            ret.push(dom_elem);
         }
-    };
-}
 
-ZenDOM = function(input) { return new ZenMarkup(input).toDOM(); };
-ZenHTML = function(input) { return new ZenMarkup(input).toHTML(); };
+        return ret;
+    };
+
+    var elems = new ZenMarkup(input).parse();
+
+    return elemsToDOM(elems);
+};
+
