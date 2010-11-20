@@ -81,7 +81,8 @@ var ZenMarkup = function(input) {
             var elem = { name: this.readWord() || 'div',
                          attributes: {},
                          classes: [],
-                         children: [] };
+                         children: [],
+                         multiplier: 1 };
 
             while (c = this.peekChar()) {
                 if (c == '#') {
@@ -94,6 +95,16 @@ var ZenMarkup = function(input) {
                     for (attrname in attribs) {
                         elem.attributes[attrname] = attribs[attrname];
                     }
+                } else if (c == '*') {
+                    var value = '';
+                    var c = this.getChar();
+
+                    while(/\d/.test(c)) {
+                        value += c;
+                        c = this.getChar();
+                    }
+
+                    if (value) { elem.multiplier = parseInt(value); }
                 } else {
                     break;
                 }
@@ -144,7 +155,7 @@ var ZenMarkup = function(input) {
     };
 };
 
-var ZenRenderer = function(input) {
+var ZenHTML = function(input) {
     var renderer = {
         renderAttributes: function(attribs) {
             ret = [];
@@ -170,13 +181,14 @@ var ZenRenderer = function(input) {
                 var elem = elems[i];
                 var attribs = self.renderAttributes(elem.attributes);
                 var classes = self.renderClasses(elem.classes);
-                ret += "<!NAME!CLASSES!ATTRIBS>".
+                var html = "<!NAME!CLASSES!ATTRIBS>".
                     replace(/!NAME/, elem.name).
                     replace(/!CLASSES/, classes ? ' '+classes : '').
                     replace(/!ATTRIBS/, attribs ? ' '+attribs : '');
-                
-                ret += self.render(elem.children);
-                ret += "</"+elem.name+">";
+                html += self.render(elem.children);
+                html += "</"+elem.name+">";
+
+                for (var j=0; j<elem.multiplier; j++) { ret += html; }
             }
 
             return ret;
@@ -209,8 +221,11 @@ var ZenDOM = function(input) {
             for (var ci=0; ci<children.length; ci++) {
                 dom_elem.appendChild(children[ci]);
             }
-                
+
             ret.push(dom_elem);
+            for (var j=1; j<elem.multiplier; j++) {
+                ret.push(dom_elem.cloneNode(true));
+            }
         }
 
         return ret;
