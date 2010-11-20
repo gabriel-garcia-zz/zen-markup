@@ -1,5 +1,3 @@
-var log = function(msg) { window.console.log(msg); }
-
 var ZenMarkup = function(input) {
     return {
         data: input.replace(/\s/g, ''),
