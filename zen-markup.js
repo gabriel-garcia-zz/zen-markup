@@ -25,7 +25,7 @@ var ZenMarkup = function(input) {
 
         readModifier: function() {
             this.getChar();
-            return this.readWord();
+            return this.readWord(/[\w-]+/);
         },
 
         readAttributeValue: function() {
