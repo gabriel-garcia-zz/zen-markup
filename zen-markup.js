@@ -78,7 +78,7 @@ var ZenMarkup = function(input) {
             var c = this.peekChar();
             while(/\s/.test(c)) { c = this.getChar(); }
 
-            var elem = { name: this.readWord(),
+            var elem = { name: this.readWord() || 'div',
                          attributes: {},
                          classes: [],
                          children: [] };
@@ -109,7 +109,7 @@ var ZenMarkup = function(input) {
             while (c = this.peekChar()) {
                 if (/\s/.test(c)) {
                     this.getChar();
-                } else if (/\w/.test(c) && !elem) {
+                } else if (/[\w#\.]/.test(c) && !elem) {
                     first = elem = [this.readElement()];
                 } else if (c == '>' || c == '+') {
                     if (!elem) throw 'There\'re no parents for this child.'
