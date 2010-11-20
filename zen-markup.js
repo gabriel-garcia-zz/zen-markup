@@ -1,6 +1,6 @@
 var ZenMarkup = function(input) {
     return {
-        data: input.replace(/\s/g, ''),
+        data: input,
         curr_index: 0,
 
         peekChar: function() { return this.data[this.curr_index]; },
@@ -25,7 +25,7 @@ var ZenMarkup = function(input) {
 
         readModifier: function() {
             this.getChar();
-            return this.readWord(/[\w-]+/);
+            return this.readWord(/[\w-]/);
         },
 
         readAttributeValue: function() {
@@ -75,7 +75,9 @@ var ZenMarkup = function(input) {
         },
 
         readElement: function() {
-            var c = null;
+            var c = this.peekChar();
+            while(/\s/.test(c)) { c = this.getChar(); }
+
             var elem = { name: this.readWord(),
                          attributes: {},
                          classes: [],
@@ -105,7 +107,9 @@ var ZenMarkup = function(input) {
             var current = [];
 
             while (c = this.peekChar()) {
-                if (/\w/.test(c) && !elem) {
+                if (/\s/.test(c)) {
+                    this.getChar();
+                } else if (/\w/.test(c) && !elem) {
                     first = elem = [this.readElement()];
                 } else if (c == '>' || c == '+') {
                     if (!elem) throw 'There\'re no parents for this child.'
@@ -194,7 +198,7 @@ var ZenDOM = function(input) {
             var dom_elem = document.createElement(elem.name);
 
             for (attrname in elem.attributes) {
-                dom_elem.setAttribute(attrname, elem.attributes[attrname]);
+                dom_elem.setAttribute(attrname, elem.attributes[attrname] || '');
             }
 
             if (elem.classes.length > 0) {
