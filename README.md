@@ -1,5 +1,5 @@
-zen-markup: a zen-coding clone for Javascript
-=============================================
+zen-markup: a zen-coding (sort of) clone for Javascript
+=======================================================
 
 This library operates with a simple way of expressing markup, very similar to the one used by [zen-coding](http://code.google.com/p/zen-coding/).
 With it you can either generate DOM elements or HTML in an easy and compact way.
